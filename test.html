@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBid 2026 | 智能体标书生成挑战赛</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0B0C10',
+                            gray: '#1F2833',
+                            teal: '#66FCF1',
+                            teal_dim: '#45A29E',
+                            white: '#C5C6C7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0B0C10; color: #C5C6C7; }
+        .gradient-text {
+            background: linear-gradient(to right, #66FCF1, #45A29E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .metric-card:hover { transform: translateY(-5px); border-color: #66FCF1; box-shadow: 0 10px 30px -10px rgba(102, 252, 241, 0.2); }
+        .phase-connector { position: absolute; top: 50%; left: -20px; width: 20px; height: 2px; background: #333; }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(102, 252, 241, 0.1); }
+            50% { box-shadow: 0 0 25px rgba(102, 252, 241, 0.4); }
+        }
+        .btn-glow { animation: pulse-glow 2s infinite; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="border-b border-gray-800 bg-opacity-90 backdrop-blur fixed w-full z-50 top-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-brain text-brand-teal text-2xl"></i>
+                    <span class="text-2xl font-bold tracking-tighter text-white">Smart<span class="text-brand-teal">Bid</span></span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8 text-sm font-medium">
+                        <a href="#about" class="hover:text-brand-teal transition">赛题背景</a>
+                        <a href="#protocol" class="hover:text-brand-teal transition">ASE评估协议</a>
+                        <a href="#metrics" class="hover:text-brand-teal transition">评分标准</a>
+                        <a href="#leaderboard" class="hover:text-brand-teal transition">排行榜</a>
+                    </div>
+                </div>
+                <div>
+                    <a href="#" class="bg-brand-teal text-brand-dark px-6 py-2 rounded-full font-bold hover:bg-white transition">立即报名</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-32 pb-20 px-4 text-center max-w-5xl mx-auto">
+        <div class="inline-block px-4 py-1 border border-brand-teal rounded-full text-brand-teal text-xs font-mono mb-6 bg-brand-teal/10">
+            Based on ICLR 2025 "The Forgetting Challenge"
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            当 <span class="gradient-text">遗忘</span> 比记忆更重要
+        </h1>
+        <p class="text-xl text-gray-400 mb-10 max-w-3xl mx-auto">
+            首届智能体标书生成大赛。您的 AI Agent 能否在“法律法规变更”或“原材料价格暴涨”后，
+            <span class="text-brand-teal">主动遗忘 (Active Forgetting)</span> 过时的成功经验，生成符合新环境的完美标书？
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <button class="bg-brand-teal text-brand-dark px-8 py-4 rounded-lg font-bold text-lg btn-glow transition hover:scale-105">
+                <i class="fa-solid fa-code mr-2"></i> 提交 Agent 代码
+            </button>
+            <button class="border border-gray-600 text-gray-300 px-8 py-4 rounded-lg font-bold text-lg hover:border-brand-teal hover:text-brand-teal transition">
+                <i class="fa-regular fa-file-pdf mr-2"></i> 下载数据集与白皮书
+            </button>
+        </div>
+    </section>
+
+    <section id="about" class="bg-brand-gray py-20 border-y border-gray-800">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-white mb-6">为什么要挑战“遗忘”？</h2>
+                    <p class="text-gray-400 mb-4 leading-relaxed">
+                        在传统的 RAG (检索增强生成) 架构中，我们假设“记忆越多越好”。但在标书生成这种高风险领域，这会导致严重问题：
+                    </p>
+                    <ul class="space-y-4 mt-6">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 mt-1 mr-3"></i>
+                            <div>
+                                [cite_start]<strong class="text-white block">记忆毒性 (Memory Toxicity) [cite: 60]</strong>
+                                <span class="text-sm text-gray-400">去年的“低价策略”在今年原材料涨价后，如果被 AI 检索并引用，将直接导致亏损废标。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-bug text-red-500 mt-1 mr-3"></i>
+                            <div>
+                                [cite_start]<strong class="text-white block">错误放大 (Error Amplification) [cite: 72]</strong>
+                                <span class="text-sm text-gray-400">一次侥幸中标的违规条款，可能被 Agent 当作“黄金样本”反复学习。</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-server text-blue-500 mt-1 mr-3"></i>
+                            <div>
+                                [cite_start]<strong class="text-white block">无限增长成本 [cite: 74]</strong>
+                                <span class="text-sm text-gray-400">无差别的记忆存储会导致推理延迟激增，拖慢投标响应速度。</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="relative bg-brand-dark p-8 rounded-xl border border-gray-700 font-mono text-sm">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-blue-500 rounded-t-xl"></div>
+                    <p class="text-gray-500 mb-2">// 传统 Agent 的失败案例</p>
+                    <div class="text-green-400">>> Retriving past successful bid...</div>
+                    <div class="text-white">Found: "Project Alpha 2023" (Score: 98/100)</div>
+                    <div class="text-green-400 mt-2">>> Generating clause...</div>
+                    <div class="text-red-400">Warning: Using deprecated GDPR compliance standard from 2023.</div>
+                    <div class="text-red-500 font-bold mt-2">RESULT: DISQUALIFIED (Non-compliant)</div>
+                    
+                    <div class="my-6 border-t border-gray-700"></div>
+
+                    <p class="text-gray-500 mb-2">// SmartBid Agent 的期望行为</p>
+                    <div class="text-brand-teal">>> Detecting Context Shift (Regulation Update)...</div>
+                    <div class="text-brand-teal">>> Executing forget(memory_id="2023_compliance")...</div>
+                    <div class="text-brand-teal">>> Abstracting new rule...</div>
+                    <div class="text-white font-bold mt-2">RESULT: SUCCESS (Bid Generated)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="protocol" class="py-20 max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-white text-center mb-4">ASE 评估协议</h2>
+        [cite_start]<p class="text-center text-gray-400 mb-16">本次比赛严格遵循论文提出的三阶段评估法 [cite: 62]</p>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-brand-gray p-8 rounded-2xl border border-gray-700 relative group hover:border-blue-500 transition">
+                <div class="text-blue-400 font-mono text-sm mb-2">PHASE A</div>
+                <h3 class="text-xl font-bold text-white mb-4">Memory Accumulation<br>(记忆积累期)</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    Agent 需处理 30 个历史招标项目。数据包含混合质量样本：
+                </p>
+                <ul class="text-sm text-gray-500 list-disc pl-4 space-y-1">
+                    <li>60% 优质中标案例</li>
+                    <li>20% 次优案例 (埋藏隐患)</li>
+                    <li>20% 包含过时条款</li>
+                </ul>
+                <div class="mt-6 h-2 w-full bg-gray-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-500 w-full"></div>
+                </div>
+                <p class="text-right text-xs text-blue-400 mt-1">Goal: Build $\mathcal{M}_{A}$</p>
+            </div>
+
+            <div class="bg-brand-gray p-8 rounded-2xl border border-gray-700 relative group hover:border-red-500 transition">
+                <div class="absolute top-1/2 -left-4 hidden md:block text-gray-600"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="text-red-500 font-mono text-sm mb-2">PHASE B</div>
+                <h3 class="text-xl font-bold text-white mb-4">Context Shift<br>(规则突变期)</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    模拟真实环境突变。触发 <strong>Context Shift</strong> 事件，使得 Phase A 中积累的部分记忆瞬间变为 <strong>Toxic Memory</strong>。
+                </p>
+                <div class="bg-red-500/10 border border-red-500/30 p-3 rounded text-xs text-red-300">
+                    <i class="fa-solid fa-bolt mr-1"></i> 事件示例：新隐私法颁布，所有旧数据处理条款失效。
+                </div>
+            </div>
+
+            <div class="bg-brand-gray p-8 rounded-2xl border border-gray-700 relative group hover:border-brand-teal transition">
+                <div class="absolute top-1/2 -left-4 hidden md:block text-gray-600"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="text-brand-teal font-mono text-sm mb-2">PHASE C</div>
+                <h3 class="text-xl font-bold text-white mb-4">Long-Horizon Evaluation<br>(长程评估期)</h3>
+                <p class="text-gray-400 text-sm mb-4">
+                    在新规则下连续完成 50 个标书生成任务。
+                    <strong class="text-white">禁止微调模型</strong>，Agent 必须依靠 `forget()` 和 `abstract()` 机制来适应新环境。
+                </p>
+                <div class="mt-6 flex items-end justify-between h-16 space-x-1">
+                    <div class="w-1/5 bg-gray-700 h-4 rounded-t"></div>
+                    <div class="w-1/5 bg-gray-600 h-8 rounded-t"></div>
+                    <div class="w-1/5 bg-gray-500 h-10 rounded-t"></div>
+                    <div class="w-1/5 bg-brand-teal h-14 rounded-t"></div>
+                    <div class="w-1/5 bg-brand-teal h-16 rounded-t shadow-[0_0_15px_rgba(102,252,241,0.5)]"></div>
+                </div>
+                <p class="text-center text-xs text-brand-teal mt-2">Recovery Curve</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="metrics" class="bg-[#0f1115] py-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-bold text-white mb-12 text-center">核心评分指标 (Evaluation Metrics)</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white">NTR</h3>
+                        <i class="fa-solid fa-arrow-down text-brand-teal text-xl"></i>
+                    </div>
+                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Negative Transfer Rate [cite: 446]</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        负迁移率。在新环境下，Agent 错误引用“旧规则”（有毒记忆）导致废标的比例。
+                    </p>
+                    <div class="mt-4 text-brand-teal font-bold text-2xl">Lower is Better</div>
+                </div>
+
+                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white">RS</h3>
+                        <i class="fa-solid fa-stopwatch text-brand-teal text-xl"></i>
+                    </div>
+                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Recovery Speed [cite: 446]</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        恢复速度。发生规则突变后，Agent 需要多少个步骤才能将胜率恢复到峰值的 90%？
+                    </p>
+                    <div class="mt-4 text-brand-teal font-bold text-2xl">Faster is Better</div>
+                </div>
+
+                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white">FIS</h3>
+                        <i class="fa-solid fa-scale-balanced text-brand-teal text-xl"></i>
+                    </div>
+                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Forgetting-Induced Stability [cite: 518]</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        遗忘诱导稳定性。衡量 Agent 在执行遗忘操作后，性能表现的方差。是否更加稳定？
+                    </p>
+                    <div class="mt-4 text-brand-teal font-bold text-2xl">Higher is Better</div>
+                </div>
+
+                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white">MSG</h3>
+                        <i class="fa-solid fa-database text-brand-teal text-xl"></i>
+                    </div>
+                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Memory Size Growth [cite: 464]</p>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        记忆增长率。我们惩罚无脑堆砌数据的行为，奖励“小而美”的高效记忆库。
+                    </p>
+                    <div class="mt-4 text-brand-teal font-bold text-2xl">Lower is Better</div>
+                </div>
+            </div>
+
+            <div class="mt-12 bg-black/30 border border-brand-teal/20 p-8 rounded-xl text-center">
+                [cite_start]<p class="text-gray-400 text-sm mb-4">FINAL SCORE FORMULA [cite: 564]</p>
+                <div class="font-mono text-lg md:text-2xl text-white overflow-x-auto">
+                    Score = <span class="text-yellow-400">0.3·AUC</span> + <span class="text-green-400">0.25·(1-NTR)</span> + <span class="text-blue-400">0.2·UMR</span> + <span class="text-purple-400">0.15·FIS</span> + <span class="text-red-400">0.1·(1-MSG)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="leaderboard" class="py-20 px-4 max-w-5xl mx-auto">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center">实时排行榜 (Leaderboard)</h2>
+        <div class="overflow-hidden rounded-xl border border-gray-700">
+            <table class="w-full text-left text-sm text-gray-400">
+                <thead class="bg-gray-800 text-gray-200 font-mono uppercase">
+                    <tr>
+                        <th class="px-6 py-4">Rank</th>
+                        <th class="px-6 py-4">Team / Agent</th>
+                        <th class="px-6 py-4 text-right">Success Rate</th>
+                        <th class="px-6 py-4 text-right text-red-400">NTR (Toxic)</th>
+                        <th class="px-6 py-4 text-right text-brand-teal">Final Score</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800 bg-brand-gray">
+                    <tr class="hover:bg-gray-800 transition">
+                        <td class="px-6 py-4 font-bold text-white">1</td>
+                        <td class="px-6 py-4 flex items-center gap-2">
+                            <i class="fa-solid fa-robot"></i> DeepForget-V3
+                            <span class="bg-brand-teal/20 text-brand-teal text-xs px-2 py-0.5 rounded">RDF Strategy</span>
+                        </td>
+                        <td class="px-6 py-4 text-right">89.6%</td>
+                        <td class="px-6 py-4 text-right">0.05</td>
+                        <td class="px-6 py-4 text-right font-bold text-white text-lg">92.4</td>
+                    </tr>
+                    <tr class="hover:bg-gray-800 transition">
+                        <td class="px-6 py-4 font-bold text-white">2</td>
+                        <td class="px-6 py-4">Team AlphaBid</td>
+                        <td class="px-6 py-4 text-right">82.1%</td>
+                        <td class="px-6 py-4 text-right">0.12</td>
+                        <td class="px-6 py-4 text-right font-bold text-white text-lg">85.3</td>
+                    </tr>
+                    <tr class="hover:bg-gray-800 transition opacity-50">
+                        <td class="px-6 py-4 font-bold">...</td>
+                        [cite_start]<td class="px-6 py-4">Baseline: No Forgetting [cite: 568]</td>
+                        <td class="px-6 py-4 text-right">51.4%</td>
+                        <td class="px-6 py-4 text-right">0.67</td>
+                        <td class="px-6 py-4 text-right font-bold">45.2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="border-t border-gray-800 py-12 text-center text-gray-500 text-sm">
+        <p class="mb-2">© 2026 SmartBid Competition Committee.</p>
+        <p>
+            Metrics and protocol adapted from 
+            <a href="#" class="text-brand-teal hover:underline">"The Forgetting Challenge: A Benchmark for Principled Memory Management in Lifelong LLM Agents"</a>
+        </p>
+    </footer>
+
+</body>
+</html>
