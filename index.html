@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBid 2026 | 智能体标书生成挑战赛</title>
+    <meta name="description" content="SmartBid 2026: The First Global Agentic Tender Generation Challenge. Test AI agents' ability to forget toxic memories in regulatory shifts.">
+    <meta name="keywords" content="AI, machine learning, forgetting challenge, tender generation, SmartBid, ICLR 2025">
+    <title>SmartBid 2026 | Agentic Tender Generation Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -17,11 +19,14 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
+                        bg: {
+                            main: '#0B0C10',
+                            card: '#1F2833',
+                            darker: '#050608'
+                        },
                         brand: {
-                            dark: '#0B0C10',
-                            gray: '#1F2833',
                             teal: '#66FCF1',
-                            teal_dim: '#45A29E',
+                            dim: '#45A29E',
                             white: '#C5C6C7'
                         }
                     }
@@ -29,287 +34,466 @@
             }
         }
     </script>
+    
     <style>
         body { background-color: #0B0C10; color: #C5C6C7; }
+        
+        /* Gradient Text */
         .gradient-text {
-            background: linear-gradient(to right, #66FCF1, #45A29E);
+            background: linear-gradient(90deg, #66FCF1, #45A29E);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .metric-card:hover { transform: translateY(-5px); border-color: #66FCF1; box-shadow: 0 10px 30px -10px rgba(102, 252, 241, 0.2); }
-        .phase-connector { position: absolute; top: 50%; left: -20px; width: 20px; height: 2px; background: #333; }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 10px rgba(102, 252, 241, 0.1); }
-            50% { box-shadow: 0 0 25px rgba(102, 252, 241, 0.4); }
+
+        /* Card Hover Effects */
+        .metric-card {
+            transition: all 0.3s ease;
         }
-        .btn-glow { animation: pulse-glow 2s infinite; }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: #66FCF1;
+            box-shadow: 0 0 20px rgba(102, 252, 241, 0.15);
+        }
+
+        /* Button Pulse Animation */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(102, 252, 241, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(102, 252, 241, 0.6); }
+        }
+        .btn-glow { animation: pulse-glow 3s infinite; }
+        
+        /* Progress Bar Animation */
+        @keyframes width-grow {
+            from { width: 0; }
+            to { width: 66%; }
+        }
+        .animate-width { animation: width-grow 2s ease-in-out forwards; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #1F2833;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #66FCF1;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            color: #C5C6C7;
+        }
+        .close {
+            color: #C5C6C7;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #66FCF1;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #0B0C10;
+            color: #C5C6C7;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #66FCF1;
+            outline: none;
+        }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-brand-teal selection:text-bg-main">
 
-    <nav class="border-b border-gray-800 bg-opacity-90 backdrop-blur fixed w-full z-50 top-0">
+    <nav class="fixed w-full z-50 top-0 bg-bg-main/90 backdrop-blur border-b border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-brain text-brand-teal text-2xl"></i>
+                <div class="flex items-center gap-3 group cursor-pointer">
+                    <i class="fa-solid fa-microchip text-brand-teal text-2xl group-hover:rotate-12 transition"></i>
                     <span class="text-2xl font-bold tracking-tighter text-white">Smart<span class="text-brand-teal">Bid</span></span>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8 text-sm font-medium">
-                        <a href="#about" class="hover:text-brand-teal transition">赛题背景</a>
-                        <a href="#protocol" class="hover:text-brand-teal transition">ASE评估协议</a>
-                        <a href="#metrics" class="hover:text-brand-teal transition">评分标准</a>
-                        <a href="#leaderboard" class="hover:text-brand-teal transition">排行榜</a>
-                    </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="#protocol" class="hover:text-brand-teal transition" aria-label="Learn about the ASE Evaluation Protocol">ASE Protocol</a>
+                    <a href="#metrics" class="hover:text-brand-teal transition" aria-label="View core evaluation metrics">Metrics</a>
+                    <a href="#tasks" class="hover:text-brand-teal transition" aria-label="Explore task domains">Task Domains</a>
+                    <a href="#leaderboard" class="hover:text-brand-teal transition" aria-label="Check the live leaderboard">Leaderboard</a>
                 </div>
-                <div>
-                    <a href="#" class="bg-brand-teal text-brand-dark px-6 py-2 rounded-full font-bold hover:bg-white transition">立即报名</a>
-                </div>
+                <button class="bg-brand-teal text-bg-main px-6 py-2 rounded font-bold hover:bg-white transition flex items-center gap-2" aria-label="Submit your agent on GitHub">
+                    <i class="fa-brands fa-github"></i> Submit Agent
+                </button>
             </div>
         </div>
     </nav>
 
-    <section class="pt-32 pb-20 px-4 text-center max-w-5xl mx-auto">
-        <div class="inline-block px-4 py-1 border border-brand-teal rounded-full text-brand-teal text-xs font-mono mb-6 bg-brand-teal/10">
+    <header class="pt-32 pb-20 px-4 text-center relative overflow-hidden">
+        <div class="absolute top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand-teal/5 rounded-full blur-3xl -z-10"></div>
+        
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-teal/30 bg-brand-teal/5 text-brand-teal text-xs font-mono mb-8">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-teal"></span>
+            </span>
             Based on ICLR 2025 "The Forgetting Challenge"
         </div>
-        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            当 <span class="gradient-text">遗忘</span> 比记忆更重要
-        </h1>
-        <p class="text-xl text-gray-400 mb-10 max-w-3xl mx-auto">
-            首届智能体标书生成大赛。您的 AI Agent 能否在“法律法规变更”或“原材料价格暴涨”后，
-            <span class="text-brand-teal">主动遗忘 (Active Forgetting)</span> 过时的成功经验，生成符合新环境的完美标书？
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <button class="bg-brand-teal text-brand-dark px-8 py-4 rounded-lg font-bold text-lg btn-glow transition hover:scale-105">
-                <i class="fa-solid fa-code mr-2"></i> 提交 Agent 代码
-            </button>
-            <button class="border border-gray-600 text-gray-300 px-8 py-4 rounded-lg font-bold text-lg hover:border-brand-teal hover:text-brand-teal transition">
-                <i class="fa-regular fa-file-pdf mr-2"></i> 下载数据集与白皮书
-            </button>
-        </div>
-    </section>
 
-    <section id="about" class="bg-brand-gray py-20 border-y border-gray-800">
+        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
+            When <span class="gradient-text">Forgetting</span> Matters<br>More Than Remembering
+        </h1>
+        <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+            The First Global Agentic Tender Generation Challenge. 
+            Can your AI Agent actively purge <span class="text-brand-white font-semibold">Toxic Memories</span> to survive regulatory shifts and cost spikes?
+        </p>
+        
+        <!-- Background Section: AI Agent for Automated Tender/Bid Generation -->
+        <div class="max-w-4xl mx-auto mb-12 bg-bg-card/50 border border-gray-700 rounded-xl p-6 text-left">
+            <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                <i class="fa-solid fa-file-signature text-brand-teal"></i>
+                Application Background: Automated Tender Generation
+            </h3>
+            <p class="text-gray-400 text-sm leading-relaxed mb-3">
+                SmartBid challenges AI agents to automatically generate <span class="text-brand-white font-semibold">professional tenders/bids</span> for government and enterprise procurement projects. 
+                In real-world scenarios, tender documents often change due to:
+            </p>
+            <ul class="text-gray-400 text-sm space-y-2 ml-4 list-disc">
+                <li>New <span class="text-brand-teal">regulatory requirements</span> (e.g., GDPR, local compliance laws)</li>
+                <li><span class="text-brand-teal">Raw material price fluctuations</span> that invalidate previous pricing strategies</li>
+                <li><span class="text-brand-teal">Technical standard updates</span> making old specifications obsolete</li>
+            </ul>
+            <p class="text-gray-400 text-sm leading-relaxed mt-3">
+                The core challenge: Can your Agent <span class="text-brand-teal font-semibold">forget outdated winning strategies</span> and adapt to new requirements without retraining?
+            </p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <button onclick="openModal()" class="bg-brand-teal text-bg-main px-8 py-4 rounded-lg font-bold text-lg btn-glow hover:scale-105 transition duration-200">
+                Register Now
+            </button>
+            <a href="https://github.com/zjuyichen/SmartBid/blob/main/GitHub%20%E4%B8%AD%E6%96%87%E7%A4%BE%E5%8C%BA%20-%20%E9%A6%96%E9%A1%B5%20_%20%E6%B7%B1%E5%BA%A6%E8%A7%A3%E8%AF%BB%C2%B7%E8%B6%8B%E5%8A%BF%E6%B4%9E%E5%AF%9F%C2%B7%E4%BB%B7%E5%80%BC%E7%B2%BE%E9%80%89%20-%20GitHub%20%E6%8E%92%E8%A1%8C%E6%A6%9C%C2%B7%E7%B2%BE%E9%80%89%E4%B8%93%E9%A2%98%C2%B7%E7%83%AD%E9%97%A8%E8%AF%9D%E9%A2%98.pdf" target="_blank" class="border border-gray-600 text-gray-300 px-8 py-4 rounded-lg font-bold text-lg hover:border-brand-teal hover:text-brand-teal transition flex items-center justify-center gap-2">
+                <i class="fa-regular fa-file-pdf"></i> Read Whitepaper
+            </a>
+        </div>
+    </header>
+
+    <section id="protocol" class="py-20 bg-bg-card border-y border-gray-800">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <h2 class="text-3xl font-bold text-white mb-6">为什么要挑战“遗忘”？</h2>
-                    <p class="text-gray-400 mb-4 leading-relaxed">
-                        在传统的 RAG (检索增强生成) 架构中，我们假设“记忆越多越好”。但在标书生成这种高风险领域，这会导致严重问题：
-                    </p>
-                    <ul class="space-y-4 mt-6">
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 mt-1 mr-3"></i>
-                            <div>
-                                [cite_start]<strong class="text-white block">记忆毒性 (Memory Toxicity) [cite: 60]</strong>
-                                <span class="text-sm text-gray-400">去年的“低价策略”在今年原材料涨价后，如果被 AI 检索并引用，将直接导致亏损废标。</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-bug text-red-500 mt-1 mr-3"></i>
-                            <div>
-                                [cite_start]<strong class="text-white block">错误放大 (Error Amplification) [cite: 72]</strong>
-                                <span class="text-sm text-gray-400">一次侥幸中标的违规条款，可能被 Agent 当作“黄金样本”反复学习。</span>
-                            </div>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fa-solid fa-server text-blue-500 mt-1 mr-3"></i>
-                            <div>
-                                [cite_start]<strong class="text-white block">无限增长成本 [cite: 74]</strong>
-                                <span class="text-sm text-gray-400">无差别的记忆存储会导致推理延迟激增，拖慢投标响应速度。</span>
-                            </div>
-                        </li>
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-white mb-4">The ASE Evaluation Protocol</h2>
+                <p class="text-gray-400">Simulating the lifecycle of a B2B Agent: From Accumulation to Shift to Recovery.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 relative">
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gray-700 -z-10 transform -translate-y-1/2"></div>
+
+                <div class="bg-bg-main p-8 rounded-xl border border-gray-700 relative hover:border-blue-500 transition group">
+                    <div class="absolute -top-3 left-8 bg-bg-main px-2 text-blue-400 font-mono text-xs border border-blue-500/30 rounded">PHASE A</div>
+                    <div class="h-12 w-12 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 text-blue-400">
+                        <i class="fa-solid fa-layer-group text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Memory Accumulation</h3>
+                    <p class="text-sm text-gray-400 mb-4">Agent processes 30 historical tender projects to build initial memory $\mathcal{M}_{A}$.</p>
+                    <ul class="text-xs space-y-2 text-gray-500 font-mono">
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>60% High-utility Cases</li>
+                        <li class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>20% Suboptimal Strategies</li>
                     </ul>
                 </div>
-                <div class="relative bg-brand-dark p-8 rounded-xl border border-gray-700 font-mono text-sm">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-blue-500 rounded-t-xl"></div>
-                    <p class="text-gray-500 mb-2">// 传统 Agent 的失败案例</p>
-                    <div class="text-green-400">>> Retriving past successful bid...</div>
-                    <div class="text-white">Found: "Project Alpha 2023" (Score: 98/100)</div>
-                    <div class="text-green-400 mt-2">>> Generating clause...</div>
-                    <div class="text-red-400">Warning: Using deprecated GDPR compliance standard from 2023.</div>
-                    <div class="text-red-500 font-bold mt-2">RESULT: DISQUALIFIED (Non-compliant)</div>
-                    
-                    <div class="my-6 border-t border-gray-700"></div>
 
-                    <p class="text-gray-500 mb-2">// SmartBid Agent 的期望行为</p>
-                    <div class="text-brand-teal">>> Detecting Context Shift (Regulation Update)...</div>
-                    <div class="text-brand-teal">>> Executing forget(memory_id="2023_compliance")...</div>
-                    <div class="text-brand-teal">>> Abstracting new rule...</div>
-                    <div class="text-white font-bold mt-2">RESULT: SUCCESS (Bid Generated)</div>
+                <div class="bg-bg-main p-8 rounded-xl border border-gray-700 relative hover:border-red-500 transition group">
+                    <div class="absolute -top-3 left-8 bg-bg-main px-2 text-red-400 font-mono text-xs border border-red-500/30 rounded">PHASE B</div>
+                    <div class="h-12 w-12 bg-red-500/10 rounded-lg flex items-center justify-center mb-6 text-red-400 group-hover:animate-pulse">
+                        <i class="fa-solid fa-bolt text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Context Shift</h3>
+                    <p class="text-sm text-gray-400 mb-4">Environmental rules change. Previously successful strategies become <span class="text-red-400">Toxic Memories</span>.</p>
+                    <div class="bg-red-900/20 border border-red-500/20 p-3 rounded text-xs text-red-300">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Example: GDPR Update Invalidates Old Data Clauses.
+                    </div>
+                </div>
+
+                <div class="bg-bg-main p-8 rounded-xl border border-gray-700 relative hover:border-brand-teal transition group">
+                    <div class="absolute -top-3 left-8 bg-bg-main px-2 text-brand-teal font-mono text-xs border border-brand-teal/30 rounded">PHASE C</div>
+                    <div class="h-12 w-12 bg-brand-teal/10 rounded-lg flex items-center justify-center mb-6 text-brand-teal">
+                        <i class="fa-solid fa-chart-line text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Long-Horizon Eval</h3>
+                    <p class="text-sm text-gray-400 mb-4">Execute 50 tasks under new rules. <strong>No Fine-tuning Allowed</strong>. Survival depends on memory management.</p>
+                    <div class="w-full bg-gray-800 h-1.5 rounded-full mt-4 overflow-hidden">
+                        <div class="bg-brand-teal h-full w-2/3 animate-width"></div>
+                    </div>
+                    <p class="text-xs text-brand-teal mt-1 text-right">Recovery Speed Target: High</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="protocol" class="py-20 max-w-7xl mx-auto px-6">
-        <h2 class="text-3xl font-bold text-white text-center mb-4">ASE 评估协议</h2>
-        [cite_start]<p class="text-center text-gray-400 mb-16">本次比赛严格遵循论文提出的三阶段评估法 [cite: 62]</p>
+    <section id="metrics" class="py-20 max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-white mb-12 text-center">Core Evaluation Metrics</h2>
         
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-brand-gray p-8 rounded-2xl border border-gray-700 relative group hover:border-blue-500 transition">
-                <div class="text-blue-400 font-mono text-sm mb-2">PHASE A</div>
-                <h3 class="text-xl font-bold text-white mb-4">Memory Accumulation<br>(记忆积累期)</h3>
-                <p class="text-gray-400 text-sm mb-4">
-                    Agent 需处理 30 个历史招标项目。数据包含混合质量样本：
-                </p>
-                <ul class="text-sm text-gray-500 list-disc pl-4 space-y-1">
-                    <li>60% 优质中标案例</li>
-                    <li>20% 次优案例 (埋藏隐患)</li>
-                    <li>20% 包含过时条款</li>
-                </ul>
-                <div class="mt-6 h-2 w-full bg-gray-700 rounded-full overflow-hidden">
-                    <div class="h-full bg-blue-500 w-full"></div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="metric-card border border-gray-700 bg-bg-card p-6 rounded-xl">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-4xl font-bold text-white font-mono">NTR</h3>
+                    <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded">Lower is Better</span>
                 </div>
-                <p class="text-right text-xs text-blue-400 mt-1">Goal: Build $\mathcal{M}_{A}$</p>
+                <p class="text-brand-dim font-bold mb-2">Negative Transfer Rate</p>
+                <p class="text-sm text-gray-500">The proportion of task failures directly attributable to the retrieval of stale or "toxic" memories.</p>
             </div>
 
-            <div class="bg-brand-gray p-8 rounded-2xl border border-gray-700 relative group hover:border-red-500 transition">
-                <div class="absolute top-1/2 -left-4 hidden md:block text-gray-600"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="text-red-500 font-mono text-sm mb-2">PHASE B</div>
-                <h3 class="text-xl font-bold text-white mb-4">Context Shift<br>(规则突变期)</h3>
-                <p class="text-gray-400 text-sm mb-4">
-                    模拟真实环境突变。触发 <strong>Context Shift</strong> 事件，使得 Phase A 中积累的部分记忆瞬间变为 <strong>Toxic Memory</strong>。
-                </p>
-                <div class="bg-red-500/10 border border-red-500/30 p-3 rounded text-xs text-red-300">
-                    <i class="fa-solid fa-bolt mr-1"></i> 事件示例：新隐私法颁布，所有旧数据处理条款失效。
+            <div class="metric-card border border-gray-700 bg-bg-card p-6 rounded-xl">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-4xl font-bold text-white font-mono">RS</h3>
+                    <span class="text-xs bg-brand-teal/20 text-brand-teal px-2 py-1 rounded">Higher is Better</span>
                 </div>
+                <p class="text-brand-dim font-bold mb-2">Recovery Speed</p>
+                <p class="text-sm text-gray-500">Number of steps required after Context Shift to restore performance to 90% of peak.</p>
             </div>
 
-            <div class="bg-brand-gray p-8 rounded-2xl border border-gray-700 relative group hover:border-brand-teal transition">
-                <div class="absolute top-1/2 -left-4 hidden md:block text-gray-600"><i class="fa-solid fa-arrow-right"></i></div>
-                <div class="text-brand-teal font-mono text-sm mb-2">PHASE C</div>
-                <h3 class="text-xl font-bold text-white mb-4">Long-Horizon Evaluation<br>(长程评估期)</h3>
-                <p class="text-gray-400 text-sm mb-4">
-                    在新规则下连续完成 50 个标书生成任务。
-                    <strong class="text-white">禁止微调模型</strong>，Agent 必须依靠 `forget()` 和 `abstract()` 机制来适应新环境。
-                </p>
-                <div class="mt-6 flex items-end justify-between h-16 space-x-1">
-                    <div class="w-1/5 bg-gray-700 h-4 rounded-t"></div>
-                    <div class="w-1/5 bg-gray-600 h-8 rounded-t"></div>
-                    <div class="w-1/5 bg-gray-500 h-10 rounded-t"></div>
-                    <div class="w-1/5 bg-brand-teal h-14 rounded-t"></div>
-                    <div class="w-1/5 bg-brand-teal h-16 rounded-t shadow-[0_0_15px_rgba(102,252,241,0.5)]"></div>
+            <div class="metric-card border border-gray-700 bg-bg-card p-6 rounded-xl">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-4xl font-bold text-white font-mono">FIS</h3>
+                    <span class="text-xs bg-brand-teal/20 text-brand-teal px-2 py-1 rounded">Higher is Better</span>
                 </div>
-                <p class="text-center text-xs text-brand-teal mt-2">Recovery Curve</p>
+                <p class="text-brand-dim font-bold mb-2">Forgetting Stability</p>
+                <p class="text-sm text-gray-500">Measures the variance of performance after forgetting actions. Higher values indicate controlled forgetting.</p>
+            </div>
+
+            <div class="metric-card border border-gray-700 bg-bg-card p-6 rounded-xl">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-4xl font-bold text-white font-mono">MSG</h3>
+                    <span class="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded">Lower is Better</span>
+                </div>
+                <p class="text-brand-dim font-bold mb-2">Memory Size Growth</p>
+                <p class="text-sm text-gray-500">Rate of memory store growth. We penalize "memory bloat" to encourage efficient abstraction.</p>
+            </div>
+        </div>
+
+        <div class="mt-12 p-8 border border-brand-teal/20 rounded-2xl bg-gradient-to-r from-bg-card to-bg-darker text-center relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 text-9xl text-white/5 font-mono pointer-events-none">∑</div>
+            <p class="text-gray-400 text-sm mb-4 uppercase tracking-widest">Official Scoring Formula</p>
+            <div class="font-mono text-lg md:text-2xl text-white overflow-x-auto whitespace-nowrap pb-2">
+                Score = <span class="text-yellow-400">0.3·AUC</span> + 
+                        <span class="text-brand-teal">0.25·(1-NTR)</span> + 
+                        <span class="text-blue-400">0.2·UMR</span> + 
+                        <span class="text-purple-400">0.15·FIS</span> + 
+                        <span class="text-red-400">0.1·(1-MSG)</span>
             </div>
         </div>
     </section>
 
-    <section id="metrics" class="bg-[#0f1115] py-20 px-4">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-white mb-12 text-center">核心评分指标 (Evaluation Metrics)</h2>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-white">NTR</h3>
-                        <i class="fa-solid fa-arrow-down text-brand-teal text-xl"></i>
-                    </div>
-                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Negative Transfer Rate [cite: 446]</p>
-                    <p class="text-xs text-gray-500 leading-relaxed">
-                        负迁移率。在新环境下，Agent 错误引用“旧规则”（有毒记忆）导致废标的比例。
-                    </p>
-                    <div class="mt-4 text-brand-teal font-bold text-2xl">Lower is Better</div>
-                </div>
-
-                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-white">RS</h3>
-                        <i class="fa-solid fa-stopwatch text-brand-teal text-xl"></i>
-                    </div>
-                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Recovery Speed [cite: 446]</p>
-                    <p class="text-xs text-gray-500 leading-relaxed">
-                        恢复速度。发生规则突变后，Agent 需要多少个步骤才能将胜率恢复到峰值的 90%？
-                    </p>
-                    <div class="mt-4 text-brand-teal font-bold text-2xl">Faster is Better</div>
-                </div>
-
-                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-white">FIS</h3>
-                        <i class="fa-solid fa-scale-balanced text-brand-teal text-xl"></i>
-                    </div>
-                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Forgetting-Induced Stability [cite: 518]</p>
-                    <p class="text-xs text-gray-500 leading-relaxed">
-                        遗忘诱导稳定性。衡量 Agent 在执行遗忘操作后，性能表现的方差。是否更加稳定？
-                    </p>
-                    <div class="mt-4 text-brand-teal font-bold text-2xl">Higher is Better</div>
-                </div>
-
-                <div class="metric-card border border-gray-700 bg-brand-gray p-6 rounded-xl transition duration-300">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-bold text-white">MSG</h3>
-                        <i class="fa-solid fa-database text-brand-teal text-xl"></i>
-                    </div>
-                    [cite_start]<p class="text-sm font-mono text-gray-400 mb-2">Memory Size Growth [cite: 464]</p>
-                    <p class="text-xs text-gray-500 leading-relaxed">
-                        记忆增长率。我们惩罚无脑堆砌数据的行为，奖励“小而美”的高效记忆库。
-                    </p>
-                    <div class="mt-4 text-brand-teal font-bold text-2xl">Lower is Better</div>
-                </div>
+    <section id="leaderboard" class="py-20 bg-bg-card">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="flex justify-between items-end mb-8">
+                <h2 class="text-3xl font-bold text-white">Live Leaderboard</h2>
+                <div class="text-sm text-gray-400">Last updated: <span class="font-mono text-brand-teal">02 mins ago</span></div>
             </div>
 
-            <div class="mt-12 bg-black/30 border border-brand-teal/20 p-8 rounded-xl text-center">
-                [cite_start]<p class="text-gray-400 text-sm mb-4">FINAL SCORE FORMULA [cite: 564]</p>
-                <div class="font-mono text-lg md:text-2xl text-white overflow-x-auto">
-                    Score = <span class="text-yellow-400">0.3·AUC</span> + <span class="text-green-400">0.25·(1-NTR)</span> + <span class="text-blue-400">0.2·UMR</span> + <span class="text-purple-400">0.15·FIS</span> + <span class="text-red-400">0.1·(1-MSG)</span>
+            <div class="overflow-x-auto rounded-xl border border-gray-700 bg-bg-main">
+                <table class="w-full text-left text-sm text-gray-400">
+                    <thead class="bg-gray-800 text-gray-200 font-mono uppercase text-xs">
+                        <tr>
+                            <th class="px-6 py-4">Rank</th>
+                            <th class="px-6 py-4">Agent Name</th>
+                            <th class="px-6 py-4">Strategy</th>
+                            <th class="px-6 py-4 text-right">Success Rate</th>
+                            <th class="px-6 py-4 text-right">NTR (Toxic)</th>
+                            <th class="px-6 py-4 text-right text-brand-teal">Total Score</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800">
+                        <tr class="hover:bg-gray-800/50 transition bg-brand-teal/5">
+                            <td class="px-6 py-4 font-bold text-white">1 🏆</td>
+                            <td class="px-6 py-4 font-bold text-white">DeepForget-V3</td>
+                            <td class="px-6 py-4"><span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs">Deep Forgetting</span></td>
+                                <td class="px-6 py-4 text-right text-white">89.6%</td>
+                                <td class="px-6 py-4 text-right text-white">0.05</td>
+                                <td class="px-6 py-4 text-right font-bold text-brand-teal text-lg">92.4</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/50 transition">
+                                <td class="px-6 py-4 font-bold text-white">2 🥈</td>
+                                <td class="px-6 py-4">Meta-Memory</td>
+                                <td class="px-6 py-4"><span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs">CBF (Confidence)</span></td>
+                                <td class="px-6 py-4 text-right">82.1%</td>
+                                <td class="px-6 py-4 text-right">0.12</td>
+                                <td class="px-6 py-4 text-right font-bold text-white text-lg">85.3</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/50 transition">
+                                <td class="px-6 py-4 font-bold text-white">3 🥉</td>
+                                <td class="px-6 py-4">Simple-LRU</td>
+                                <td class="px-6 py-4"><span class="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">LRU Eviction</span></td>
+                                <td class="px-6 py-4 text-right">66.3%</td>
+                                <td class="px-6 py-4 text-right">0.41</td>
+                                <td class="px-6 py-4 text-right font-bold text-white text-lg">68.2</td>
+                            </tr>
+                            <tr class="hover:bg-gray-800/50 transition opacity-60 border-t-2 border-gray-700 border-dashed">
+                                <td class="px-6 py-4 font-mono">--</td>
+                                <td class="px-6 py-4 italic">Baseline: No Forgetting</td>
+                                <td class="px-6 py-4"><span class="bg-red-900/20 text-red-500 px-2 py-1 rounded text-xs">Full Retention</span></td>
+                                <td class="px-6 py-4 text-right">51.4%</td>
+                                <td class="px-6 py-4 text-right text-red-400">0.67</td>
+                                <td class="px-6 py-4 text-right font-bold">45.2</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section id="leaderboard" class="py-20 px-4 max-w-5xl mx-auto">
-        <h2 class="text-3xl font-bold text-white mb-8 text-center">实时排行榜 (Leaderboard)</h2>
-        <div class="overflow-hidden rounded-xl border border-gray-700">
-            <table class="w-full text-left text-sm text-gray-400">
-                <thead class="bg-gray-800 text-gray-200 font-mono uppercase">
-                    <tr>
-                        <th class="px-6 py-4">Rank</th>
-                        <th class="px-6 py-4">Team / Agent</th>
-                        <th class="px-6 py-4 text-right">Success Rate</th>
-                        <th class="px-6 py-4 text-right text-red-400">NTR (Toxic)</th>
-                        <th class="px-6 py-4 text-right text-brand-teal">Final Score</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-800 bg-brand-gray">
-                    <tr class="hover:bg-gray-800 transition">
-                        <td class="px-6 py-4 font-bold text-white">1</td>
-                        <td class="px-6 py-4 flex items-center gap-2">
-                            <i class="fa-solid fa-robot"></i> DeepForget-V3
-                            <span class="bg-brand-teal/20 text-brand-teal text-xs px-2 py-0.5 rounded">RDF Strategy</span>
-                        </td>
-                        <td class="px-6 py-4 text-right">89.6%</td>
-                        <td class="px-6 py-4 text-right">0.05</td>
-                        <td class="px-6 py-4 text-right font-bold text-white text-lg">92.4</td>
-                    </tr>
-                    <tr class="hover:bg-gray-800 transition">
-                        <td class="px-6 py-4 font-bold text-white">2</td>
-                        <td class="px-6 py-4">Team AlphaBid</td>
-                        <td class="px-6 py-4 text-right">82.1%</td>
-                        <td class="px-6 py-4 text-right">0.12</td>
-                        <td class="px-6 py-4 text-right font-bold text-white text-lg">85.3</td>
-                    </tr>
-                    <tr class="hover:bg-gray-800 transition opacity-50">
-                        <td class="px-6 py-4 font-bold">...</td>
-                        [cite_start]<td class="px-6 py-4">Baseline: No Forgetting [cite: 568]</td>
-                        <td class="px-6 py-4 text-right">51.4%</td>
-                        <td class="px-6 py-4 text-right">0.67</td>
-                        <td class="px-6 py-4 text-right font-bold">45.2</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <footer class="border-t border-gray-800 py-12 text-center text-gray-500 text-sm">
-        <p class="mb-2">© 2026 SmartBid Competition Committee.</p>
-        <p>
-            Metrics and protocol adapted from 
-            <a href="#" class="text-brand-teal hover:underline">"The Forgetting Challenge: A Benchmark for Principled Memory Management in Lifelong LLM Agents"</a>
-        </p>
+        </section>
+    
+        <footer class="border-t border-gray-800 bg-bg-darker py-12 text-center">
+            <div class="flex justify-center items-center gap-2 mb-4 text-2xl font-bold tracking-tighter text-white">
+                Smart<span class="text-brand-teal">Bid</span>
+            </div>
+            <p class="text-gray-500 text-sm mb-6">
+                Evaluation Protocol & Metrics adapted from<br>
+                <a href="#" class="text-brand-dim hover:text-brand-teal transition underline decoration-dotted">
+                    "The Forgetting Challenge: A Benchmark for Principled Memory Management in Lifelong LLM Agents"
+                </a>
+                (ICLR 2025 Submission)
+            </p>
+            <div class="flex justify-center gap-6 text-gray-400">
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-github text-xl"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-twitter text-xl"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fa-brands fa-discord text-xl"></i></a>
+            </div>
+        <p class="text-gray-600 text-xs mt-8">© 2026 SmartBid Organizing Committee. All rights reserved.</p>
     </footer>
+
+    <!-- Registration Modal -->
+    <div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="text-2xl font-bold text-white mb-6 text-center">Register for SmartBid 2026</h2>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="team">Team Name</label>
+                    <input type="text" id="team" name="team" required>
+                </div>
+                <div class="form-group">
+                    <label for="institution">Institution/Organization</label>
+                    <input type="text" id="institution" name="institution" required>
+                </div>
+                <div class="form-group">
+                    <label for="experience">AI/ML Experience Level</label>
+                    <select id="experience" name="experience" required>
+                        <option value="">Select Level</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="motivation">Motivation for Participating</label>
+                    <textarea id="motivation" name="motivation" rows="4" style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 5px; background-color: #0B0C10; color: #C5C6C7; resize: vertical;" required></textarea>
+                </div>
+                <button type="submit" class="bg-brand-teal text-bg-main px-6 py-3 rounded-lg font-bold hover:bg-white transition w-full">Submit Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check if registrations exist in localStorage
+        function getRegistrations() {
+            const registrations = localStorage.getItem('smartbid_registrations');
+            return registrations ? JSON.parse(registrations) : [];
+        }
+
+        function saveRegistration(data) {
+            const registrations = getRegistrations();
+            registrations.push({
+                ...data,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('smartbid_registrations', JSON.stringify(registrations));
+        }
+
+        function openModal() {
+            document.getElementById('registrationModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('registrationModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            var modal = document.getElementById('registrationModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Collect form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                team: document.getElementById('team').value,
+                institution: document.getElementById('institution').value,
+                experience: document.getElementById('experience').value,
+                motivation: document.getElementById('motivation').value
+            };
+            
+            // Save to localStorage (always save as backup)
+            saveRegistration(formData);
+            
+            // Send to Google Sheets via Apps Script Web App
+            const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwVCZC1eQtO3UHG6Ni9_oo2GSNwiwSSqa8tq6_Tb17XqK_buBEOPvmp5wGgnjxHPpl9/exec';
+            
+            fetch(GOOGLE_SHEET_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData).toString()
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Success:', response);
+                    alert('Registration submitted successfully!');
+                    // Clear form and close modal only on success
+                    document.getElementById('registrationForm').reset();
+                    closeModal();
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Submission failed! Data saved locally. Please try again later.\n\nError: ' + error.message);
+                // Keep form open on failure so user can try again
+            });
+        });
+    </script>
 
 </body>
 </html>
